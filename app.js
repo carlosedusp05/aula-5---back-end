@@ -1,0 +1,45 @@
+/**************************************************************************************
+ * Objetivo: API responsável em criar end-points referente a locadoras de filmes
+ * Data: 07/10/2025
+ * Autor: Carlos Eduardo 
+ * Versão: 1.0
+ *************************************************************************************/
+
+const express = require('express')
+const cors = require('cors')
+const bodyParser = require('body-parser')
+
+//Import do arquivo de funções  
+// let filme = await controllerFilmes
+
+//Define a porta padrão da API, se for em um servidor de nuvem não temos acesso a porta
+//em execução local podemos falar definir uma porta livre
+const PORT = process.PORT || 8090
+
+//Instancia na classe do express
+const app = express()
+
+app.use((request, response, next)=>{
+    response.header('Acess-Control-Allow-Origin', '*')//IP de Origem
+    response.header('Acess-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')//Métodos (Vebos) do protocolo HTTP
+
+    app.use(cors())
+    next()//Proximo
+})
+
+//Import das controller da API
+const controllerFilme = require('./controller/filme/controller_filme.js')
+    
+//Endpoints para o CRUD de filmes
+
+//Retorna a lista de filmes 
+app.get('/v1/locadora/filmes', cors(), async function (request, response) {
+    let filme = await controllerFilme.listarFilmes()
+
+    response.status(filme.status_code)
+    response.json(filme)
+})
+
+app.listen(PORT, function(){
+    console.log('API aguardando requisições...')
+})
